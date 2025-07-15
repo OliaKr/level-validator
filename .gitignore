@@ -1,0 +1,32 @@
+# Node modules
+node_modules/
+
+# Environment variables
+.env
+.env.production
+
+logs
+*.log
+npm-debug.log*
+
+pids
+*.pid
+*.seed
+*.pid.lock
+
+.idea/
+.vscode/
+!.vscode/extensions.json
+.DS_Store
+*.swp
+
+.npm
+
+Thumbs.db
+ehthumbs.db
+
+coverage/
+
+dist/
+build/
+*.local
