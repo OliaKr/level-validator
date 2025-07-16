@@ -1,10 +1,10 @@
 import axios from "axios";
 
 const testConfig = {
-  level: 10,
-  difficulty: "medium",
-  reward: 3500,
-  time_limit: 15,
+  level: 4,
+  difficulty: "easy",
+  reward: 300,
+  time_limit: 45,
 };
 
 async function testValidator() {
