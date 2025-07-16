@@ -5,6 +5,8 @@ const testConfig = {
   difficulty: "easy",
   reward: 300,
   time_limit: 45,
+  // You can use another model: "gpt-4-turbo", "gpt-3.5-turbo" or leave empty to use the default model
+  model: "gpt-4o-mini",
 };
 
 async function testValidator() {

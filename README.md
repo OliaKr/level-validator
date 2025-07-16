@@ -3,6 +3,8 @@
 This microservice was built as a professional challenge for an Israeli mobile gaming company.
 It validates JSON-based game level configurations using schema validation and LLM-based logical review.
 
+Supports flexible model switching between OpenAI models. You can specify the model(e.g gpt-4o-turbo, gpt-4o-mini, gpt-3.5-turbo) directly in the request body. If no model is provided, it will automatically fall back to the default model defined in the .env file .
+
 Tech stack: Node.js, AJV, OpenAI API, structured JSON output.
 
 ## Few-Shot Prompting
@@ -56,18 +58,17 @@ node test.js
 
 ## Test Examples & Outputs 🧪
 
-To ensure both schema and logic are validated correctly, I tested three representative schenarios:
+To ensure both schema and logic are validated correctly, here are some examples of representative schenarios:
 
-1. **Unbalanced Reward-Time Configuration**
+1. **Unbalanced Reward-Time Configuration** (Using gpt-3.5-turbo)
    A mid-level setup with too high reward and too short time limit.
    Expected to trigger feedback and suggested fixes.
    ![תמונה](https://github.com/OliaKr/level-validator/blob/main/public/Capture1.JPG)
 
-2. **Balanced Easy-Level setup**
+2. **Balanced Easy-Level setup** (Using gpt-4o-mini)
    A properly configured easy-level input, used to confirm that the model recognizes well-balanced cases.
    ![תמונה](https://github.com/OliaKr/level-validator/blob/main/public/Capture2.JPG)
 
-3. **Bordeline configuration for medium level**
-   An edge case with a slightly high reward and tight time limit for a medium level.
-   Used to test the model's nuanced judgment.
+3. **Balanced Easy-Level setup** (Using gpt-4-turbo)
+   A hard-level configuration with reward and time limit values outside the acceptable range for this difficulty.
    ![תמונה](https://github.com/OliaKr/level-validator/blob/main/public/Capture3.JPG)

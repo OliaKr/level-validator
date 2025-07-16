@@ -9,7 +9,7 @@ const app = express();
 app.use(express.json());
 
 const PORT = process.env.PORT || 3001;
-const MODEL = process.env.OPENAI_MODEL;
+const DEFAULT_MODEL = process.env.OPENAI_MODEL;
 
 const client = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
@@ -22,6 +22,7 @@ const schema = {
     difficulty: { type: "string", enum: ["easy", "medium", "hard"] },
     reward: { type: "number" },
     time_limit: { type: "number" },
+    model: { type: "string" },
   },
   required: ["level", "difficulty", "reward", "time_limit"],
   additionalProperties: false,
@@ -33,9 +34,26 @@ const validate = ajv.compile(schema);
 app.post("/validate", async (req, res) => {
   const config = req.body;
 
-  //Schema validation
-  const isValidSchema = validate(config);
+  const modelFromRequest = config.model;
+  const selectedModel = modelFromRequest || DEFAULT_MODEL;
 
+  const supportedModels = new Set([
+    "gpt-4-turbo",
+    "gpt-3.5-turbo",
+    "gpt-4o-mini",
+  ]);
+
+  //Schema validation
+
+  if (!supportedModels.has(selectedModel)) {
+    return res.status(400).json({
+      error: `Unsupported model '${selectedModel}'. Supported models: ${Array.from(
+        supportedModels
+      ).join(", ")}`,
+    });
+  }
+
+  const isValidSchema = validate(config);
   if (!isValidSchema) {
     return res.status(400).json({
       schema_validation: "failed",
@@ -46,14 +64,17 @@ app.post("/validate", async (req, res) => {
   const prompt = `
   You are an experienced game designer reviewing the balance of a level of configuration in a mobile game.
 
-  Evaluate whether the configuration makes sense in terms of game balance and player experience. For example:
-  - Easy: 100-500 rewards, >30s time limit
-  - Medium: 500-2000 rewards, 20-60s time limit
-  - Hard: 2000-5000 rewards, 10-30s time limit
+  Evaluate whether the configuration makes sense in terms of game balance and player experience. 
+  
+  You MUST apply the following balancing rules as hard constraints. Do NOT allow any deviation or personal interpretation.
+  - Easy: reward must be between 100 and 500 inclusive, and time_limit must be at least 30 seconds. A value of exactly 30 seconds is allowed.
+  - Medium: reward must be between 500 and 2000 inclusive, and time_limit must be between 20 and 60 seconds inclusive. A value of exactly 20 or 60 is allowed.
+  - Hard: reward must be between 2000 and 5000 inclusive, and time_limit must be between 10 and 30 seconds inclusive. A value of exactly 10 or 30 is allowed.
+
 
   Be concise. Use no more than 3 sentences in your analysis. Return only a JSON response in this format:
     {
-        "analysis": "Short explanation"",
+        "analysis": "Short explanation",
         "suggested_actions": ["Action 1", "Action 2"]
     }
    
@@ -90,7 +111,7 @@ app.post("/validate", async (req, res) => {
         "suggested_actions": ["No action needed"]
     }
 
-  Use the difficulty/reward/time mapping strictly as reference rules.      
+  Do not ignore the rules above. Only use them to guide your evaluation.     
   Respond as a JSON object only.    
 
   Now evaluate the following configuration:
@@ -102,11 +123,12 @@ app.post("/validate", async (req, res) => {
   // LLM review
   try {
     const response = await client.chat.completions.create({
-      model: MODEL,
+      model: selectedModel,
       messages: [
         {
           role: "system",
-          content: "You are a helpful assistant that returns only valid JSON.",
+          content:
+            "You are a rule-based game configuration reviewer. Return a valid JSON only. Never use subjective judgment. Follow numeric rules as hard constraints ",
         },
         {
           role: "user",
@@ -131,6 +153,7 @@ app.post("/validate", async (req, res) => {
     }
 
     return res.status(200).json({
+      model_used: selectedModel,
       schema_validation: {
         valid: true,
         errors: [],
