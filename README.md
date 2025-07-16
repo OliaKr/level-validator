@@ -1,4 +1,4 @@
-## 🎮 Level Validtor
+## 🎮 Level Validator
 
 This microservice was built as a professional challenge for an Israeli mobile gaming company.
 It validates JSON-based game level configurations using schema validation and LLM-based logical review.
@@ -53,3 +53,21 @@ node index.js
 node test.js
 
 ```
+
+## Test Examples & Outputs 🧪
+
+To ensure both schema and logic are validated correctly, I tested three representative schenarios:
+
+1. **Unbalanced Reward-Time Configuration**
+   A mid-level setup with too high reward and too short time limit.
+   Expected to trigger feedback and suggested fixes.
+   ![תמונה](https://github.com/OliaKr/level-validator/blob/main/public/Capture1.JPG)
+
+2. **Balanced Easy-Level setup**
+   A properly configured easy-level input, used to confirm that the model recognizes well-balanced cases.
+   ![תמונה](https://github.com/OliaKr/level-validator/blob/main/public/Capture2.JPG)
+
+3. **Bordeline configuration for medium level**
+   An edge case with a slightly high reward and tight time limit for a medium level.
+   Used to test the model's nuanced judgment.
+   ![תמונה](https://github.com/OliaKr/level-validator/blob/main/public/Capture3.JPG)
