@@ -31,17 +31,36 @@ const schema = {
 const ajv = new Ajv();
 const validate = ajv.compile(schema);
 
+// Confidence scoring calculation
+
+function calculateConfidenceScore(config) {
+  let totalRules = 2;
+  let passedRules = 0;
+
+  const { difficulty, reward, time_limit } = config;
+
+  if (difficulty === "easy") {
+    if (reward >= 100 && reward <= 500) passedRules++;
+    if (time_limit >= 30) passedRules++;
+  } else if (difficulty === "medium") {
+    if (reward >= 500 && reward <= 2000) passedRules++;
+    if (time_limit >= 20 && time_limit <= 60) passedRules++;
+  } else if (difficulty === "hard") {
+    if (reward >= 2000 && reward <= 5000) passedRules++;
+    if (time_limit >= 10 && time_limit <= 30) passedRules++;
+  }
+
+  const confidence = (passedRules / totalRules).toFixed(2);
+  return Number(confidence);
+}
+
 app.post("/validate", async (req, res) => {
   const config = req.body;
 
   const modelFromRequest = config.model;
   const selectedModel = modelFromRequest || DEFAULT_MODEL;
 
-  const supportedModels = new Set([
-    "gpt-4-turbo",
-    "gpt-3.5-turbo",
-    "gpt-4o-mini",
-  ]);
+  const supportedModels = new Set(["gpt-4-turbo", "gpt-4", "gpt-4o-mini"]);
 
   //Schema validation
 
@@ -61,15 +80,16 @@ app.post("/validate", async (req, res) => {
     });
   }
 
+  const confidenceScore = calculateConfidenceScore(config);
+
   const prompt = `
   You are an experienced game designer reviewing the balance of a level of configuration in a mobile game.
 
   Evaluate whether the configuration makes sense in terms of game balance and player experience. 
   
-  You MUST apply the following balancing rules as hard constraints. Do NOT allow any deviation or personal interpretation.
   - Easy: reward must be between 100 and 500 inclusive, and time_limit must be at least 30 seconds. A value of exactly 30 seconds is allowed.
-  - Medium: reward must be between 500 and 2000 inclusive, and time_limit must be between 20 and 60 seconds inclusive. A value of exactly 20 or 60 is allowed.
-  - Hard: reward must be between 2000 and 5000 inclusive, and time_limit must be between 10 and 30 seconds inclusive. A value of exactly 10 or 30 is allowed.
+  - Medium: reward must be between 500 and 2000 inclusive, and time_limit must be between 20 and 60 seconds inclusive. 
+  - Hard: reward must be between 2000 and 5000 inclusive, and time_limit must be between 10 and 30 seconds inclusive. 
 
 
   Be concise. Use no more than 3 sentences in your analysis. Return only a JSON response in this format:
@@ -110,9 +130,11 @@ app.post("/validate", async (req, res) => {
         "analysis": "The reward of 300 is appropriate for an easy level, and the time limit of 45 seconds is sufficient for players to complete it comfortably.",
         "suggested_actions": ["No action needed"]
     }
+    
+    
 
-  Do not ignore the rules above. Only use them to guide your evaluation.     
-  Respond as a JSON object only.    
+  Do not ignore the rules above. Only use them to guide your evaluation.
+  Respond as a JSON object only.
 
   Now evaluate the following configuration:
   ${JSON.stringify(config, null, 2)}
@@ -154,6 +176,7 @@ app.post("/validate", async (req, res) => {
 
     return res.status(200).json({
       model_used: selectedModel,
+      confidence_score: confidenceScore,
       schema_validation: {
         valid: true,
         errors: [],

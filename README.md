@@ -1,24 +1,28 @@
-## 🎮 Level Validator
+# Level Validator
 
 This microservice was built as a professional challenge for an Israeli mobile gaming company.
 It validates JSON-based game level configurations using schema validation and LLM-based logical review.
 
-Supports flexible model switching between OpenAI models. You can specify the model(e.g gpt-4o-turbo, gpt-4o-mini, gpt-3.5-turbo) directly in the request body. If no model is provided, it will automatically fall back to the default model defined in the .env file .
+Supports flexible model switching between OpenAI models. You can specify the model (`gpt-4-turbo`, `gpt-4`, `gpt-4o-mini`) directly in the request body. If no model is provided, it will automatically fall back to the default model defined in the .env file .
 
-Tech stack: Node.js, AJV, OpenAI API, structured JSON output.
+Each response also includes a confidence score between 0 and 1, indicating how well the configuration matches the expected rules.
+
+**Tech stack**: Node.js, AJV, OpenAI API, structured JSON output.
 
 ## Few-Shot Prompting
 
 This project uses **few-shot prompting** to guide LLM with structured examples.
 By providing examples of well-formed inputs and expected outputs, the model
 
-- Understands domain-specific rules(reward vs. difficulty/time limit)
-- Returns only structured JSON responces
-- Remains determenistic and aligned with schema
+- Understands domain-specific rules (reward vs. difficulty/time limit)
+- Returns only structured JSON responses
+- Remains deterministic and aligned with schema
 
-## To install and Run 🚀
+## Setup Instructions
 
-1. Clone the repository
+### Option 1 : Run locally (manual setup)
+
+1. **Clone the repository**
 
 ```bash
 git clone https://github.com/OliaKr/level-validator.git
@@ -26,14 +30,14 @@ cd level-validator
 
 ```
 
-2. Install the dependencies
+2. **Install the dependencies**
 
 ```bash
 npm install
 
 ```
 
-3. Create an .env file and Configue the LLM API Key
+3. **Create an `.env` file and configure your LLM API Key**
 
 ```bash
 OPENAI_API_KEY=your_openai_key_here
@@ -42,33 +46,135 @@ PORT=3000
 
 ```
 
-4. Run the service
+4. **Run the test script (optional)**
 
 ```bash
 node index.js
 
 ```
 
-5. To test the service you can use Postman or run the following command in the terminal
+### Option 2 : Run using Docker
+
+1. **Build the Docker image**
+
+```bash
+docker build -t level-validator .
+
+```
+
+2. **Run the container with your `.env` file**
+
+```bash
+docker run -p 3000:3000 --env-file .env level-validator
+
+```
+
+3. **Test the running service**
+
+Run the test script to test multiple configurations at once:
 
 ```bash
 node test.js
 
 ```
 
-## Test Examples & Outputs 🧪
+Or use Postman:
+
+```bash
+POST http://localhost:3000/validate
+
+```
+
+## Test Examples & Outputs
 
 To ensure both schema and logic are validated correctly, here are some examples of representative schenarios:
 
-1. **Unbalanced Reward-Time Configuration** (Using gpt-3.5-turbo)
-   A mid-level setup with too high reward and too short time limit.
-   Expected to trigger feedback and suggested fixes.
-   ![תמונה](https://github.com/OliaKr/level-validator/blob/main/public/Capture1.JPG)
-
-2. **Balanced Easy-Level setup** (Using gpt-4o-mini)
+1. **Balanced Easy-Level setup** (Using gpt-4o-mini)
    A properly configured easy-level input, used to confirm that the model recognizes well-balanced cases.
-   ![תמונה](https://github.com/OliaKr/level-validator/blob/main/public/Capture2.JPG)
 
-3. **Balanced Easy-Level setup** (Using gpt-4-turbo)
-   A hard-level configuration with reward and time limit values outside the acceptable range for this difficulty.
-   ![תמונה](https://github.com/OliaKr/level-validator/blob/main/public/Capture3.JPG)
+   ```json
+   {
+     "level": 4,
+     "difficulty": "easy",
+     "reward": 300,
+     "time_limit": 45,
+     "model": "gpt-4o-mini"
+   }
+   ```
+
+   ```json
+   {
+     "model_used": "gpt-4o-mini",
+     "confidence_score": 1,
+     "schema_validation": {
+       "valid": true,
+       "errors": []
+     },
+     "llm_feedback": {
+       "analysis": "The reward of 300 is appropriate for an easy level, and the time limit of 45 seconds is sufficient for players to complete it comfortably.",
+       "suggested_actions": ["No action needed"]
+     }
+   }
+   ```
+
+2. **UnBalanced Easy-Level setup** (Using gpt-4-turbo)
+   A hard-level configuration with low reward and high time limit for this difficulty.
+
+   ```json
+   {
+     "level": 20,
+     "difficulty": "hard",
+     "reward": 1000,
+     "time_limit": 60,
+     "model": "gpt-4-turbo"
+   }
+   ```
+
+   ```json
+   {
+     "model_used": "gpt-4-turbo",
+     "confidence_score": 0,
+     "schema_validation": {
+       "valid": true,
+       "errors": []
+     },
+     "llm_feedback": {
+       "analysis": "The reward of 1000 is too low for a hard level, and the time limit of 60 seconds exceeds the maximum allowed for this difficulty, which could affect game balance.",
+       "suggested_actions": [
+         "Increase reward to at least 2000 for hard difficulty",
+         "Reduce the time limit to be within 10-30 seconds"
+       ]
+     }
+   }
+   ```
+
+3. ## Unbalanced Reward Configuration
+
+   A medium-level configuration with low reward and acceptable time-limit. (Using gpt-4)
+
+   ```json
+   {
+     "level": 14,
+     "difficulty": "medium",
+     "reward": 300,
+     "time_limit": 30,
+     "model": "gpt-4"
+   }
+   ```
+
+   ```json
+   {
+     "model_used": "gpt-4",
+     "confidence_score": 0.5,
+     "schema_validation": {
+       "valid": true,
+       "errors": []
+     },
+     "llm_feedback": {
+       "analysis": "The reward of 300 is too low for a medium level, and the time limit of 30 seconds is within the expected range.",
+       "suggested_actions": [
+         "Increase the reward to at least 500 for a medium difficulty"
+       ]
+     }
+   }
+   ```
