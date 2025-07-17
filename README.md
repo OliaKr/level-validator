@@ -117,7 +117,7 @@ To ensure both schema and logic are validated correctly, here are some examples 
    }
    ```
 
-2. **UnBalanced Easy-Level setup** (Using gpt-4-turbo)
+2. **Unbalanced Hard-Level setup** (Using gpt-4-turbo)
    A hard-level configuration with low reward and high time limit for this difficulty.
 
    ```json
