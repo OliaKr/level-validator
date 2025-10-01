@@ -1,7 +1,6 @@
 # Level Validator
 
-This microservice was built as a professional challenge for an Israeli mobile gaming company.
-It validates JSON-based game level configurations using schema validation and LLM-based logical review.
+Validates JSON-based game level configurations using schema validation and LLM-based logical review.
 
 Supports flexible model switching between OpenAI models. You can specify the model (`gpt-4-turbo`, `gpt-4`, `gpt-4o-mini`) directly in the request body. If no model is provided, it will automatically fall back to the default model defined in the .env file .
 
@@ -49,7 +48,7 @@ PORT=3000
 4. **Run the test script (optional)**
 
 ```bash
-node index.js
+node app.js
 
 ```
 
