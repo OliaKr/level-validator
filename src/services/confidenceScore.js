@@ -1,5 +1,4 @@
 // Confidence scoring calculation
-
 export function calculateConfidenceScore(config) {
   let totalRules = 2;
   let passedRules = 0;
