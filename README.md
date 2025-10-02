@@ -93,6 +93,7 @@ http://localhost:3000
 ```
 
 ![alt text](https://github.com/OliaKr/level-validator/blob/main/src/assests/dashboard-main-view.JPG)
+![alt text](https://github.com/OliaKr/level-validator/blob/main/src/assests/validation-and-history.JPG)
 
 ## Testing
 
@@ -207,6 +208,3 @@ npm test
      }
    }
    ```
-
-   ![alt text](https://github.com/OliaKr/level-validator/blob/main/src/assests/dashboard-results.JPG)
-   ![alt text](https://github.com/OliaKr/level-validator/blob/main/src/assests/validation-results-mobile.JPG)
