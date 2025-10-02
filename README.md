@@ -1,12 +1,19 @@
-# Level Validator
+# Overview
 
-Validates JSON-based game level configurations using schema validation and LLM-based logical review.
+Level Validator is a lightweight Node.js microservice for validating JSON-based game level configurations.
 
-Supports flexible model switching between OpenAI models. You can specify the model (`gpt-4-turbo`, `gpt-4`, `gpt-4o-mini`) directly in the request body. If no model is provided, it will automatically fall back to the default model defined in the .env file .
+It combines:
 
-Each response also includes a confidence score between 0 and 1, indicating how well the configuration matches the expected rules.
+- **Schema validation (AJV)** – to ensure structural correctness
+- **LLM-based review (OpenAI)** – to provide logical and design feedback
+- **Configurable model selection** – supports `gpt-4-turbo`, `gpt-4`, `gpt-4o-mini`
+- **Confidence scoring** – indicates how well the level configuration fits
+  expected balance rules
 
-**Tech stack**: Node.js, AJV, OpenAI API, structured JSON output.
+The project follows a clean modular structure with routes, services, prompts, schemas, tests and can serve as a
+**starter template for LLM-enabled validation services**.
+
+**Tech stack**: Node.js, AJV, OpenAI API, Docker, Jest, Supertest.
 
 ## Few-Shot Prompting
 
@@ -68,25 +75,18 @@ docker run -p 3000:3000 --env-file .env level-validator
 
 ```
 
-3. **Test the running service**
+3. ## Testing
 
-Run the test script to test multiple configurations at once:
+Includes unit tests and end-to-end tests using Jest + Supertest
 
-```bash
-node test.js
-
-```
-
-Or use Postman:
+Run all tests:
 
 ```bash
-POST http://localhost:3000/validate
+node test
 
 ```
 
 ## Test Examples & Outputs
-
-To ensure both schema and logic are validated correctly, here are some examples of representative schenarios:
 
 1. **Balanced Easy-Level setup** (Using gpt-4o-mini)
    A properly configured easy-level input, used to confirm that the model recognizes well-balanced cases.
@@ -147,9 +147,8 @@ To ensure both schema and logic are validated correctly, here are some examples 
    }
    ```
 
-3. ## Unbalanced Reward Configuration
-
-   A medium-level configuration with low reward and acceptable time-limit. (Using gpt-4)
+3. **Unbalanced Reward Configuration** (Using gpt-4)
+   A medium-level configuration with low reward and acceptable time-limit.
 
    ```json
    {
