@@ -7,7 +7,7 @@ const schema = {
     time_limit: { type: "number" },
     model: { type: "string" },
   },
-  required: ["level", "difficulty", "reward", "time_limit"],
+  required: ["level", "difficulty", "reward", "time_limit", "model"],
   additionalProperties: false,
 };
 
