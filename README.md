@@ -21,6 +21,9 @@ The project follows a clean modular structure with routes, services, prompts, sc
 
 **Tech stack**: Node.js, AJV, OpenAI API, Docker, Jest, Supertest.
 
+![alt text](https://github.com/OliaKr/level-validator/blob/main/src/assests/dashboard-main-view.JPG)
+![alt text](https://github.com/OliaKr/level-validator/blob/main/src/assests/validation-and-history.JPG)
+
 ## Few-Shot Prompting
 
 This project uses **few-shot prompting** to guide LLM with structured examples.
@@ -98,9 +101,6 @@ Note: If port 3000 is already in use, run the container on a different host port
 docker run -d -p 3002:3000 --env-file .env level-validator
 
 ```
-
-![alt text](https://github.com/OliaKr/level-validator/blob/main/src/assests/dashboard-main-view.JPG)
-![alt text](https://github.com/OliaKr/level-validator/blob/main/src/assests/validation-and-history.JPG)
 
 ## Testing
 
