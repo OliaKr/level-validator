@@ -92,6 +92,13 @@ http://localhost:3000
 
 ```
 
+Note: If port 3000 is already in use, run the container on a different host port:
+
+```bash
+docker run -d -p 3002:3000 --env-file .env level-validator
+
+```
+
 ![alt text](https://github.com/OliaKr/level-validator/blob/main/src/assests/dashboard-main-view.JPG)
 ![alt text](https://github.com/OliaKr/level-validator/blob/main/src/assests/validation-and-history.JPG)
 
