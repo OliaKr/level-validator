@@ -1,14 +1,20 @@
-# Overview
+# Level Validator
 
-Level Validator is a lightweight Node.js microservice for validating JSON-based game level configurations.
+Level Validator is a lightweight Node.js microservice for validating JSON-based game level configurations
+using AJV schema and LLM-powered logical review.
 
-It combines:
+---
 
-- **Schema validation (AJV)** – to ensure structural correctness
-- **LLM-based review (OpenAI)** – to provide logical and design feedback
+## Overview
+
+Level Validator combines:
+
+- **Schema validation (AJV)** – ensures structural correctness of level configs
+- **LLM-based review (OpenAI)** – provides logical and design feedback
 - **Configurable model selection** – supports `gpt-4-turbo`, `gpt-4`, `gpt-4o-mini`
-- **Confidence scoring** – indicates how well the level configuration fits
+- **Confidence scoring** – shows how well the level configuration fits
   expected balance rules
+- **Responsive dashboard** - optional web UI for running validations interactively.
 
 The project follows a clean modular structure with routes, services, prompts, schemas, tests and can serve as a
 **starter template for LLM-enabled validation services**.
@@ -25,6 +31,8 @@ By providing examples of well-formed inputs and expected outputs, the model
 - Remains deterministic and aligned with schema
 
 ## Setup Instructions
+
+By default, both the API and the dashboard run on **http://localhost:3000**.
 
 ### Option 1 : Run locally (manual setup)
 
@@ -52,14 +60,14 @@ PORT=3000
 
 ```
 
-4. **Run the test script (optional)**
+4. **Start the service (optional)**
 
 ```bash
 node app.js
 
 ```
 
-### Option 2 : Run using Docker
+### Option 2 : Run with Docker
 
 1. **Build the Docker image**
 
@@ -75,21 +83,32 @@ docker run -p 3000:3000 --env-file .env level-validator
 
 ```
 
-3. ## Testing
+## Access the Dashboard
+
+Once the service is runnong(locally or via Docker), open
+
+```bash
+http://localhost:3000
+
+```
+
+## Testing
 
 Includes unit tests and end-to-end tests using Jest + Supertest
 
 Run all tests:
 
 ```bash
-node test
+npm test
 
 ```
 
-## Test Examples & Outputs
+## Example Inputs & Outputs
 
 1. **Balanced Easy-Level setup** (Using gpt-4o-mini)
    A properly configured easy-level input, used to confirm that the model recognizes well-balanced cases.
+
+   Input
 
    ```json
    {
@@ -100,6 +119,8 @@ node test
      "model": "gpt-4o-mini"
    }
    ```
+
+   Output
 
    ```json
    {
@@ -119,6 +140,8 @@ node test
 2. **Unbalanced Hard-Level setup** (Using gpt-4-turbo)
    A hard-level configuration with low reward and high time limit for this difficulty.
 
+   Input
+
    ```json
    {
      "level": 20,
@@ -128,6 +151,8 @@ node test
      "model": "gpt-4-turbo"
    }
    ```
+
+   Output
 
    ```json
    {
@@ -150,6 +175,8 @@ node test
 3. **Unbalanced Reward Configuration** (Using gpt-4)
    A medium-level configuration with low reward and acceptable time-limit.
 
+   Input
+
    ```json
    {
      "level": 14,
@@ -159,6 +186,8 @@ node test
      "model": "gpt-4"
    }
    ```
+
+   Output
 
    ```json
    {
@@ -176,3 +205,7 @@ node test
      }
    }
    ```
+
+   ![alt text](https://github.com/OliaKr/level-validator/blob/main/src/assets/dashboard-main-view.JPG)
+   ![alt text](https://github.com/OliaKr/level-validator/blob/main/src/assets/dashboard-results.JPG)
+   ![alt text](https://github.com/OliaKr/level-validator/blob/main/src/assets/validation-results-mobile.JPG)
