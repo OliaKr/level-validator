@@ -92,6 +92,8 @@ http://localhost:3000
 
 ```
 
+![alt text](https://github.com/OliaKr/level-validator/blob/main/src/assests/dashboard-main-view.JPG)
+
 ## Testing
 
 Includes unit tests and end-to-end tests using Jest + Supertest
@@ -206,6 +208,5 @@ npm test
    }
    ```
 
-   ![alt text](https://github.com/OliaKr/level-validator/blob/main/src/assets/dashboard-main-view.JPG)
-   ![alt text](https://github.com/OliaKr/level-validator/blob/main/src/assets/dashboard-results.JPG)
-   ![alt text](https://github.com/OliaKr/level-validator/blob/main/src/assets/validation-results-mobile.JPG)
+   ![alt text](https://github.com/OliaKr/level-validator/blob/main/src/assests/dashboard-results.JPG)
+   ![alt text](https://github.com/OliaKr/level-validator/blob/main/src/assests/validation-results-mobile.JPG)
